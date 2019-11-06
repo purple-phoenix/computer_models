@@ -13,20 +13,30 @@ enum State {
     S2
 }
 
-fn fsm(str: &str) -> AutomatonAcceptance {
-    return fsm_aux(str, State::S0)
+#[derive(Debug, PartialOrd, PartialEq)]
+enum Alphabet {
+    ONE,
+    ZERO
 }
 
-fn fsm_aux(str: &str, state: State) -> AutomatonAcceptance {
-    if str.is_empty() {
+fn fsm(stream: &[Alphabet]) -> AutomatonAcceptance {
+    return fsm_aux(stream, State::S0)
+}
+
+fn fsm_aux(stream: &[Alphabet], state: State) -> AutomatonAcceptance {
+    if stream.is_empty() {
         return determine_state_acceptance(state)
     }
     else {
-        let bit = str.chars().next().unwrap();
-        return match state {
-             S0 => AutomatonAcceptance::Reject,
-             S1 => AutomatonAcceptance::Reject,
-             S2 => AutomatonAcceptance::Reject
+        let car = &stream[0];
+        let cdr = &stream[1..];
+        return match (car, state) {
+            (ONE, S0) => AutomatonAcceptance::Reject,
+            (ZERO, S0) => AutomatonAcceptance::Reject,
+            (ONE, S1) => AutomatonAcceptance::Reject,
+            (ZERO, S1) => AutomatonAcceptance::Reject,
+            (ONE, S2) => AutomatonAcceptance::Reject,
+            (ZERO, S2) => AutomatonAcceptance::Reject,
         }
     }
     return AutomatonAcceptance::Reject
@@ -41,16 +51,11 @@ fn determine_state_acceptance(state: State) -> AutomatonAcceptance {
     }
 }
 
-fn car_cadr(s: &str) -> (&str, &str) {
-    match s.chars().next() {
-        Some(c) => s.split_at(c.len_utf8()),
-        None => s.split_at(0),
-    }
-}
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::state_machine::state_machine::Alphabet::{ZERO, ONE};
 
     #[test]
     fn test_determine_state_acceptance() {
@@ -59,11 +64,4 @@ mod tests {
         assert_eq!(AutomatonAcceptance::Reject, determine_state_acceptance(State::S2));
     }
 
-    #[test]
-    fn test_car_cadr() {
-        let some_str = "some_str";
-        let empty_str = "";
-        assert_eq!(("s", "ome_str"), car_cadr(some_str));
-        assert_eq!(("", ""), car_cadr(empty_str));
-    }
 }
