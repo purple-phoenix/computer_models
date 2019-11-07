@@ -63,8 +63,8 @@ fn fsm_aux(stream: &[Alphabet], state: State) -> AutomatonAcceptance {
         println!("Applying {} to state {}", car, state);
 
         return match (car, state) {
-            (ONE, S0) => {println!("other"); fsm_aux(cdr, S1)},
-            (ZERO, S0) => {println!("SOme"); fsm_aux(cdr, S0)},
+            (ONE, S0) => fsm_aux(cdr, S1),
+            (ZERO, S0) => fsm_aux(cdr, S0),
             (ONE, S1) => fsm_aux(cdr, S0),
             (ZERO, S1) => fsm_aux(cdr, S2),
             (ONE, S2) => fsm_aux(cdr, S2),
