@@ -96,20 +96,20 @@ fn abs_state_fun(stream: &[Alphabet],
     }
 }
 
-fn S0_fun(stream: &[Alphabet]) -> AutomatonAcceptance{
-    return abs_state_fun(stream, S0_fun, S1_fun, true);
+fn s0_fun(stream: &[Alphabet]) -> AutomatonAcceptance{
+    return abs_state_fun(stream, s0_fun, s1_fun, true);
 }
 
-fn S1_fun(stream: &[Alphabet]) -> AutomatonAcceptance {
-    return abs_state_fun(stream, S2_fun, S0_fun, false);
+fn s1_fun(stream: &[Alphabet]) -> AutomatonAcceptance {
+    return abs_state_fun(stream, s2_fun, s0_fun, false);
 }
 
-fn S2_fun(stream: &[Alphabet]) -> AutomatonAcceptance {
-    return abs_state_fun(stream, S1_fun, S2_fun, false);
+fn s2_fun(stream: &[Alphabet]) -> AutomatonAcceptance {
+    return abs_state_fun(stream, s1_fun, s2_fun, false);
 }
 
 fn fsm_ho(stream: &[Alphabet]) -> AutomatonAcceptance {
-    return S0_fun(stream)
+    return s0_fun(stream)
 }
 
 fn determine_state_acceptance(state: State) -> AutomatonAcceptance {
