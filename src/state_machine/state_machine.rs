@@ -97,46 +97,15 @@ fn abs_state_fun(stream: &[Alphabet],
 }
 
 fn S0_fun(stream: &[Alphabet]) -> AutomatonAcceptance{
-    if stream.is_empty() {
-        return Accept
-    }
-    else {
-        let car = &stream[0];
-        let cdr = &stream[1..];
-        return match car {
-            ZERO => S0_fun(cdr),
-            ONE => S1_fun(cdr)
-        }
-    }
-
+    return abs_state_fun(stream, S0_fun, S1_fun, true);
 }
 
 fn S1_fun(stream: &[Alphabet]) -> AutomatonAcceptance {
-    if stream.is_empty() {
-        return Reject
-    }
-    else {
-        let car = &stream[0];
-        let cdr = &stream[1..];
-        return match car {
-            ZERO => S2_fun(cdr),
-            ONE => S0_fun(cdr)
-        }
-    }
+    return abs_state_fun(stream, S2_fun, S0_fun, false);
 }
 
 fn S2_fun(stream: &[Alphabet]) -> AutomatonAcceptance {
-    if stream.is_empty() {
-        return Reject
-    }
-    else {
-        let car = &stream[0];
-        let cdr = &stream[1..];
-        return match car {
-            ZERO => S1_fun(cdr),
-            ONE => S2_fun(cdr)
-        }
-    }
+    return abs_state_fun(stream, S1_fun, S2_fun, false);
 }
 
 fn fsm_ho(stream: &[Alphabet]) -> AutomatonAcceptance {
