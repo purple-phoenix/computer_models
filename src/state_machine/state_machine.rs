@@ -2,6 +2,7 @@ use crate::state_machine::state_machine::State::{S0, S1, S2};
 use crate::state_machine::state_machine::Alphabet::{ZERO, ONE};
 
 use std::fmt;
+use crate::state_machine::state_machine::AutomatonAcceptance::Accept;
 
 #[derive(Debug, PartialOrd, PartialEq)]
 enum AutomatonAcceptance {
@@ -71,6 +72,10 @@ fn fsm_aux(stream: &[Alphabet], state: State) -> AutomatonAcceptance {
             (ZERO, S2) => fsm_aux(cdr, S1),
         }
     }
+}
+
+fn fsm_ho() -> AutomatonAcceptance {
+    Accept
 }
 
 fn determine_state_acceptance(state: State) -> AutomatonAcceptance {
