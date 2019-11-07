@@ -6,4 +6,5 @@
 
 ### Steps
 1) git clone https://github.com/purple-phoenix/computer_models.git
-2) cargo build or cargo test
+2) cd computer_models
+3) cargo test
