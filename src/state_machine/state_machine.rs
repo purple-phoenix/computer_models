@@ -74,6 +74,28 @@ fn fsm_aux(stream: &[Alphabet], state: State) -> AutomatonAcceptance {
     }
 }
 
+fn abs_state_fun(stream: &[Alphabet],
+                 zero_match_fun: fn(&[Alphabet]) -> AutomatonAcceptance,
+                 one_match_fun: fn(&[Alphabet]) -> AutomatonAcceptance,
+                 is_accept_state: bool) -> AutomatonAcceptance {
+    if stream.is_empty() {
+        if is_accept_state {
+            return Accept
+        }
+        else {
+            return Reject
+        }
+    }
+    else {
+        let car = &stream[0];
+        let cdr = &stream[1..];
+        return match car {
+            ZERO => zero_match_fun(cdr),
+            ONE => one_match_fun(cdr)
+        }
+    }
+}
+
 fn S0_fun(stream: &[Alphabet]) -> AutomatonAcceptance{
     if stream.is_empty() {
         return Accept
