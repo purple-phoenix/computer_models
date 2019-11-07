@@ -2,7 +2,7 @@ use crate::state_machine::state_machine::State::{S0, S1, S2};
 use crate::state_machine::state_machine::Alphabet::{ZERO, ONE};
 
 use std::fmt;
-use crate::state_machine::state_machine::AutomatonAcceptance::Accept;
+use crate::state_machine::state_machine::AutomatonAcceptance::{Accept, Reject};
 
 #[derive(Debug, PartialOrd, PartialEq)]
 enum AutomatonAcceptance {
@@ -74,8 +74,51 @@ fn fsm_aux(stream: &[Alphabet], state: State) -> AutomatonAcceptance {
     }
 }
 
-fn fsm_ho() -> AutomatonAcceptance {
-    Accept
+fn S0_fun(stream: &[Alphabet]) -> AutomatonAcceptance{
+    if stream.is_empty() {
+        return Accept
+    }
+    else {
+        let car = &stream[0];
+        let cdr = &stream[1..];
+        return match car {
+            ZERO => S0_fun(cdr),
+            ONE => S1_fun(cdr)
+        }
+    }
+
+}
+
+fn S1_fun(stream: &[Alphabet]) -> AutomatonAcceptance {
+    if stream.is_empty() {
+        return Reject
+    }
+    else {
+        let car = &stream[0];
+        let cdr = &stream[1..];
+        return match car {
+            ZERO => S2_fun(cdr),
+            ONE => S0_fun(cdr)
+        }
+    }
+}
+
+fn S2_fun(stream: &[Alphabet]) -> AutomatonAcceptance {
+    if stream.is_empty() {
+        return Reject
+    }
+    else {
+        let car = &stream[0];
+        let cdr = &stream[1..];
+        return match car {
+            ZERO => S1_fun(cdr),
+            ONE => S2_fun(cdr)
+        }
+    }
+}
+
+fn fsm_ho(stream: &[Alphabet]) -> AutomatonAcceptance {
+    return S0_fun(stream)
 }
 
 fn determine_state_acceptance(state: State) -> AutomatonAcceptance {
@@ -108,6 +151,14 @@ mod tests {
         assert_eq!(Reject, fsm(&[ONE, ZERO, ZERO]));
         assert_eq!(Reject, fsm(&[ONE, ONE, ONE, ZERO, ZERO]));
         assert_eq!(Accept, fsm(&[ONE, ONE, ZERO, ONE, ZERO, ONE, ONE, ZERO, ONE]));
+    }
+
+    #[test]
+    fn test_fsm_ho() {
+        assert_eq!(Accept, fsm_ho(&[ZERO, ZERO, ZERO]));
+        assert_eq!(Reject, fsm_ho(&[ONE, ZERO, ZERO]));
+        assert_eq!(Reject, fsm_ho(&[ONE, ONE, ONE, ZERO, ZERO]));
+        assert_eq!(Accept, fsm_ho(&[ONE, ONE, ZERO, ONE, ZERO, ONE, ONE, ZERO, ONE]));
     }
 
 }
