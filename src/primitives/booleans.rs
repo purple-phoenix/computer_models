@@ -1,29 +1,36 @@
 use crate::primitives::booleans::MBoolean::{TRUE, FALSE};
 
-//State implementation
+// State implementation
 #[derive(Debug, PartialOrd, PartialEq)]
-enum MBoolean {
+pub enum MBoolean {
     TRUE,
     FALSE
 }
 
-fn make_true_st() -> MBoolean {
+pub fn make_true_st() -> MBoolean {
     return TRUE;
 }
 
-fn make_false_st() -> MBoolean {
+pub fn make_false_st() -> MBoolean {
     return FALSE;
 }
 
-type MTrue<T1, T2> = Box<Fn(T1, T2) -> T1>;
+// Functional Implementation TODO
 
-type MFalse<T1, T2> = Box<Fn(T1, T2) -> T2>;
+pub type MTrue<T1, T2> = Box<dyn Fn(T1, T2) -> T1>;
 
-fn make_true_fn<T1, T2>() -> MTrue<T1, T2> {
+pub type MFalse<T1, T2> = Box<dyn Fn(T1, T2) -> T2>;
+
+pub enum MBooleanFn<T1, T2> {
+    TRUE(MTrue<T1, T2>),
+    FALSE(MFalse<T1, T2>)
+}
+
+pub fn make_true_fn<T1, T2>() -> MTrue<T1, T2> {
     return Box::new(|x, y| {x});
 }
 
-fn make_false_fn<T1, T2>() -> MFalse<T1, T2> {
+pub fn make_false_fn<T1, T2>() -> MFalse<T1, T2> {
     return Box::new(|x, y| {y})
 }
 
