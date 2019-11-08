@@ -1,0 +1,79 @@
+use crate::primitives::booleans::{MBoolean};
+
+fn make_not() -> fn(&MBoolean) -> MBoolean {
+    |input|
+    match input {
+         MBoolean::TRUE => MBoolean::FALSE,
+         MBoolean::FALSE => MBoolean::TRUE
+    }
+}
+
+
+fn make_and() -> fn(&MBoolean, &MBoolean) -> MBoolean {
+    |inputA, inputB|{
+        match (inputA, inputB) {
+            (MBoolean::TRUE, MBoolean::TRUE) => MBoolean::TRUE,
+            (MBoolean::TRUE, MBoolean::FALSE) => MBoolean::FALSE,
+            (MBoolean::FALSE, MBoolean::FALSE) => MBoolean::FALSE,
+            (MBoolean::FALSE, MBoolean::TRUE) => MBoolean::FALSE
+        }
+    }
+}
+
+fn make_or() -> fn(&MBoolean, &MBoolean) -> MBoolean {
+    |inputA, inputB|{
+        match (inputA, inputB) {
+            (MBoolean::TRUE, MBoolean::TRUE) => MBoolean::TRUE,
+            (MBoolean::TRUE, MBoolean::FALSE) => MBoolean::TRUE,
+            (MBoolean::FALSE, MBoolean::FALSE) => MBoolean::FALSE,
+            (MBoolean::FALSE, MBoolean::TRUE) => MBoolean::TRUE
+        }
+    }
+}
+
+fn make_xor() -> fn(&MBoolean, &MBoolean) -> MBoolean {
+    |inputA, inputB| {
+        let or_output = make_or()(inputA, inputB);
+        let and_output = make_and()(inputA, inputB);
+        let notted_and = make_not()(&and_output);
+        return make_and()(&or_output, &notted_and);
+    }
+}
+
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_make_not() {
+        assert_eq!(MBoolean::TRUE, make_not()(&MBoolean::FALSE));
+        assert_eq!(MBoolean::FALSE, make_not()(&MBoolean::TRUE));
+    }
+
+    #[test]
+    fn test_make_and() {
+        assert_eq!(MBoolean::TRUE, make_and()(&MBoolean::TRUE, &MBoolean::TRUE));
+        assert_eq!(MBoolean::FALSE, make_and()(&MBoolean::FALSE, &MBoolean::TRUE));
+        assert_eq!(MBoolean::FALSE, make_and()(&MBoolean::FALSE, &MBoolean::FALSE));
+        assert_eq!(MBoolean::FALSE, make_and()(&MBoolean::TRUE, &MBoolean::FALSE));
+    }
+
+    #[test]
+    fn test_make_or() {
+        assert_eq!(MBoolean::TRUE, make_or()(&MBoolean::TRUE, &MBoolean::TRUE));
+        assert_eq!(MBoolean::TRUE, make_or()(&MBoolean::FALSE, &MBoolean::TRUE));
+        assert_eq!(MBoolean::FALSE, make_or()(&MBoolean::FALSE, &MBoolean::FALSE));
+        assert_eq!(MBoolean::TRUE, make_or()(&MBoolean::TRUE, &MBoolean::FALSE));
+    }
+
+    #[test]
+    fn test_make_xor() {
+        assert_eq!(MBoolean::FALSE, make_xor()(&MBoolean::TRUE, &MBoolean::TRUE));
+        assert_eq!(MBoolean::TRUE, make_xor()(&MBoolean::FALSE, &MBoolean::TRUE));
+        assert_eq!(MBoolean::FALSE, make_xor()(&MBoolean::FALSE, &MBoolean::FALSE));
+        assert_eq!(MBoolean::TRUE, make_xor()(&MBoolean::TRUE, &MBoolean::FALSE));
+    }
+
+}
