@@ -31,6 +31,15 @@ fn make_or() -> fn(&MBoolean, &MBoolean) -> MBoolean {
     }
 }
 
+fn make_xor() -> fn(&MBoolean, &MBoolean) -> MBoolean {
+    |inputA, inputB| {
+        let or_output = make_or()(inputA, inputB);
+        let and_output = make_and()(inputA, inputB);
+        let notted_and = make_not()(&and_output);
+        return make_and()(&or_output, &notted_and);
+    }
+}
+
 
 
 #[cfg(test)]
