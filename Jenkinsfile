@@ -13,6 +13,7 @@ pipeline {
             steps {
                 echo "PATH is $PATH"
                 sh 'cargo test'
+            }
         }
     }
 }
