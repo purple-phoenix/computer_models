@@ -20,6 +20,17 @@ fn make_and() -> fn(MBoolean, MBoolean) -> MBoolean {
     }
 }
 
+fn make_or() -> fn(MBoolean, MBoolean) -> MBoolean {
+    |inputA, inputB|{
+        match (inputA, inputB) {
+            (MBoolean::TRUE, MBoolean::TRUE) => MBoolean::TRUE,
+            (MBoolean::TRUE, MBoolean::FALSE) => MBoolean::TRUE,
+            (MBoolean::FALSE, MBoolean::FALSE) => MBoolean::FALSE,
+            (MBoolean::FALSE, MBoolean::TRUE) => MBoolean::TRUE
+        }
+    }
+}
+
 
 
 #[cfg(test)]
@@ -38,6 +49,14 @@ mod tests {
         assert_eq!(MBoolean::FALSE, make_and()(MBoolean::FALSE, MBoolean::TRUE));
         assert_eq!(MBoolean::FALSE, make_and()(MBoolean::FALSE, MBoolean::FALSE));
         assert_eq!(MBoolean::FALSE, make_and()(MBoolean::TRUE, MBoolean::FALSE));
+    }
+
+    #[test]
+    fn test_make_or() {
+        assert_eq!(MBoolean::TRUE, make_or()(MBoolean::TRUE, MBoolean::TRUE));
+        assert_eq!(MBoolean::TRUE, make_or()(MBoolean::FALSE, MBoolean::TRUE));
+        assert_eq!(MBoolean::FALSE, make_or()(MBoolean::FALSE, MBoolean::FALSE));
+        assert_eq!(MBoolean::TRUE, make_or()(MBoolean::TRUE, MBoolean::FALSE));
     }
 
 }
