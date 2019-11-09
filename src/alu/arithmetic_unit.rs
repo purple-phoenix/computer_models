@@ -1,5 +1,6 @@
 use crate::primitives::booleans::MBoolean;
 use crate::logic_gates::logical_gates::*;
+use crate::primitives::numbers::*;
 
 pub fn make_half_adder() -> fn(&MBoolean, &MBoolean) -> (MBoolean, MBoolean){
     |inputA, inputB| {
@@ -22,6 +23,20 @@ pub fn make_full_adder() -> fn(&MBoolean, &MBoolean, &MBoolean) -> (MBoolean, MB
     }
 
 }
+
+pub fn make_adder(num: Number) -> Number {
+    match num {
+        int8 => make_adder_x_bit(8),
+        i32 => make_adder_x_bit(32)
+    }
+}
+
+fn make_adder_x_bit(num_bits: i32) -> Number {
+
+    //STUB TODO
+    return Number::int32(int32::make_zero())
+}
+
 
 #[cfg(test)]
 mod test {
@@ -77,5 +92,10 @@ mod test {
         //1 + 1 + 1 = 1 and carry
         assert_eq!((MBoolean::TRUE, MBoolean::TRUE),
                    make_full_adder()(&MBoolean::TRUE, &MBoolean::TRUE, &MBoolean::TRUE));
+    }
+
+    #[test]
+    fn test_adder() {
+
     }
 }

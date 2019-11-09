@@ -1,33 +1,39 @@
 use crate::primitives::byte::{MByte, make_empty_byte};
 
+pub enum Number {
+    int8(int8),
+    int32(int32)
+}
+
 #[derive(Debug, PartialOrd, PartialEq)]
-struct int32 {
+pub struct int32 {
     bytes: Vec<MByte>
 }
 
 #[derive(Debug, PartialOrd, PartialEq)]
-struct int8 {
+pub struct int8 {
     bytes: Vec<MByte>
 }
+
 
 impl int32 {
 
-    fn make_zero() -> int32 {
+    pub fn make_zero() -> int32 {
         return int32 {bytes: vec![make_empty_byte(); 4]}
     }
 
-    fn is_valid(&self) -> bool {
+    pub fn is_valid(&self) -> bool {
         self.bytes.len() == 4
     }
 }
 
 impl int8 {
 
-    fn make_zero() -> int8 {
+    pub fn make_zero() -> int8 {
         return int8 {bytes: vec![make_empty_byte()]}
     }
 
-    fn is_valid(&self) -> bool {
+    pub fn is_valid(&self) -> bool {
         self.bytes.len() == 1
     }
 }
