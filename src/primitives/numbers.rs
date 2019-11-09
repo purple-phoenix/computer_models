@@ -50,6 +50,10 @@ impl int32 {
         }
     }
 
+    pub fn new(some_bytes: Vec<MByte>) -> int32 {
+        return int32 {bytes: some_bytes}
+    }
+
     pub fn to_number(&self) -> Number {
         return Number::int32(self.clone())
     }
@@ -83,6 +87,10 @@ impl int8 {
 
     pub fn get_bytes(&self) -> Vec<MByte> {
         return self.bytes.clone();
+    }
+
+    pub fn new(some_bytes: Vec<MByte>) -> int8 {
+        return int8 {bytes: some_bytes}
     }
 }
 

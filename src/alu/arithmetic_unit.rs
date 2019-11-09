@@ -57,6 +57,8 @@ fn add(x: &HasBytes, y: &HasBytes) -> Number {
 
 fn add_checked(x: Vec<MByte>, y: Vec<MByte>) -> Number {
     let num_bytes = x.len();
+    let mut carry_bit = &MBoolean::FALSE;
+    let mut byte_vector = vec![];
     for a_byte in 0..num_bytes {
         let mut x_byte = x[a_byte].clone();
         //Convert to LE
@@ -64,12 +66,29 @@ fn add_checked(x: Vec<MByte>, y: Vec<MByte>) -> Number {
         let mut y_byte = y[a_byte].clone();
         // Convert to LE
         y_byte.reverse();
-        let (sum_byte, carry_bit) = eight_bit_carry_adder(&x_byte, &y_byte);
+        let (mut sum_byte, carry_bit) =
+            eight_bit_carry_adder(&x_byte, &y_byte, carry_bit);
+        //Convert sum byte to big endian for return
+        sum_byte.reverse();
+        byte_vector.push(sum_byte)
     }
-    return Number::int32(int32::make_zero())
+
+    if num_bytes <= 1 {
+        return Number::int8(int8::new(byte_vector))
+    }
+    else if num_bytes <= 4 {
+        return Number::int32(int32::new(byte_vector))
+    }
+    else {
+        panic!("No number implemented which can store {} bytes");
+    }
 }
 
-fn eight_bit_carry_adder(x: &MByte, y: &MByte) -> (MByte, MBoolean) {
+fn eight_bit_carry_adder_init(x: &MByte, y: &MByte) -> (MByte, MBoolean) {
+    return eight_bit_carry_adder(x, y, &MBoolean::FALSE)
+}
+
+fn eight_bit_carry_adder(x: &MByte, y: &MByte, carry_bit: &MBoolean) -> (MByte, MBoolean) {
     let first_bit_x = &x[0];
     let first_bit_y = &y[0];
     let rest_x_bits = &x[1..];
@@ -183,7 +202,7 @@ mod test {
         //Convert to LE for 8 bit adder
         ten_byte.reverse();
 
-        assert_eq!(eight_bit_carry_adder(&five_byte, &five_byte),
+        assert_eq!(eight_bit_carry_adder_init(&five_byte, &five_byte),
                    (ten_byte, MBoolean::FALSE));
 
         let mut one_twenty_eight_byte = make_byte_with_padding(
@@ -194,7 +213,7 @@ mod test {
         let mut byte_after_overflow = make_byte_with_padding(vec![MBoolean::FALSE; 8]);
         //Convert to LE for 8 bit adder
         byte_after_overflow.reverse();
-        assert_eq!(eight_bit_carry_adder(&one_twenty_eight_byte, &one_twenty_eight_byte),
+        assert_eq!(eight_bit_carry_adder_init(&one_twenty_eight_byte, &one_twenty_eight_byte),
                    (byte_after_overflow, MBoolean::TRUE))
     }
 }
