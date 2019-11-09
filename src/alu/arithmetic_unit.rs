@@ -31,7 +31,7 @@ pub fn make_adder() -> fn(&Number, &Number) -> Number {
 
 }
 
-fn add(x: &HasBytes, y: &HasBytes) -> Number {
+fn add(x: &dyn HasBytes, y: &dyn HasBytes) -> Number {
     let mut x_bytes = x.get_bytes();
     let mut y_bytes = y.get_bytes();
     let num_x_bytes = x_bytes.len();
