@@ -74,10 +74,10 @@ fn add_checked(x: Vec<MByte>, y: Vec<MByte>) -> Number {
     }
 
     if num_bytes <= 1 {
-        return Number::int8(Int8::new(byte_vector))
+        return Number::Int8(Int8::new(byte_vector))
     }
     else if num_bytes <= 4 {
-        return Number::int32(Int32::new(byte_vector))
+        return Number::Int32(Int32::new(byte_vector))
     }
     else {
         panic!("No number implemented which can store {} bytes");

@@ -3,8 +3,8 @@ use crate::primitives::booleans::MBoolean;
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub enum Number {
-    int8(Int8),
-    int32(Int32)
+    Int8(Int8),
+    Int32(Int32)
 }
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
@@ -24,8 +24,8 @@ pub trait HasBytes{
 impl HasBytes for Number {
     fn get_bytes(&self) -> Vec<MByte> {
         match self {
-            Number::int8(an_int8) => an_int8.get_bytes(),
-            Number::int32(an_int32) => an_int32.get_bytes()
+            Number::Int8(an_int8) => an_int8.get_bytes(),
+            Number::Int32(an_int32) => an_int32.get_bytes()
         }
     }
 }
@@ -44,7 +44,7 @@ impl Int32 {
     pub fn make_int32(input: &usize) -> Int32 {
         let num = make_intn(input, &32);
         match num {
-            Number::int32(an_int32) => an_int32,
+            Number::Int32(an_int32) => an_int32,
             _ => panic!("make_intn({}, 32) did not return an int32")
         }
     }
@@ -54,7 +54,7 @@ impl Int32 {
     }
 
     pub fn to_number(&self) -> Number {
-        return Number::int32(self.clone())
+        return Number::Int32(self.clone())
     }
 
     pub fn get_bytes(&self) -> Vec<MByte> {
@@ -76,12 +76,12 @@ impl Int8 {
     pub fn make_int8(input: &usize) -> Int8 {
         let num = make_intn(input, &8);
         match num {
-            Number::int8(an_int8) =>  an_int8,
+            Number::Int8(an_int8) =>  an_int8,
             _ => {panic!("make_intn({}, 8) did not return an int8")}
         }
     }
     pub fn to_number(&self) -> Number {
-        return Number::int8(self.clone())
+        return Number::Int8(self.clone())
     }
 
     pub fn get_bytes(&self) -> Vec<MByte> {
@@ -124,8 +124,8 @@ fn make_intn(input: &usize, num_bits: &usize) -> Number {
     }
 
     return match num_bits {
-        8 => Number::int8(Int8 {bytes: byte_vector}),
-        32 => Number::int32(Int32 {bytes: byte_vector}),
+        8 => Number::Int8(Int8 {bytes: byte_vector}),
+        32 => Number::Int32(Int32 {bytes: byte_vector}),
         _ => {panic!("{} bit number is not supported yet.")}
     }
 }
