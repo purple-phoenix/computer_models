@@ -58,7 +58,7 @@ fn add(x: &dyn HasBytes, y: &dyn HasBytes) -> Number {
 fn add_checked(x: Vec<MByte>, y: Vec<MByte>) -> Number {
     println!("\n\n\n\n\n\n\n");
     let num_bytes = x.len();
-    let mut carry_bit = &mut MBoolean::FALSE;
+    let carry_bit = &mut MBoolean::FALSE;
     let mut byte_vector = vec![];
     for a_byte in 0..num_bytes {
         let byte_index = num_bytes - 1 - a_byte;
