@@ -28,8 +28,8 @@ impl int32 {
         self.bytes.len() == 4
     }
 
-    pub fn make_int32(input:usize) -> int32 {
-        let num = make_intn(input, 32);
+    pub fn make_int32(input: &usize) -> int32 {
+        let num = make_intn(input, &32);
         match num {
             Number::int32(an_int32) => an_int32,
             _ => panic!("make_intn({}, 32) did not return an int32")
@@ -48,8 +48,8 @@ impl int8 {
         self.bytes.len() == 1
     }
 
-    pub fn make_int8(input: usize) -> int8 {
-        let num = make_intn(input, 8);
+    pub fn make_int8(input: &usize) -> int8 {
+        let num = make_intn(input, &8);
         match num {
             Number::int8(an_int8) =>  an_int8,
             _ => {panic!("make_intn({}, 8) did not return an int8")}
@@ -57,7 +57,7 @@ impl int8 {
     }
 }
 
-fn make_intn(input:usize, num_bits: usize) -> Number {
+fn make_intn(input: &usize, num_bits: &usize) -> Number {
     let input_bytes = input.to_be_bytes();
     let byte_len = 8;
 
@@ -141,7 +141,7 @@ mod tests {
         let five_byte =
             make_byte_with_padding(vec![MBoolean::TRUE, MBoolean::FALSE, MBoolean::TRUE]);
         assert_eq!(
-            int8::make_int8(5),
+            int8::make_int8(&5),
             int8 {bytes: vec![five_byte]}
         );
     }
@@ -151,7 +151,7 @@ mod tests {
         let five_byte =
             make_byte_with_padding(vec![MBoolean::TRUE, MBoolean::FALSE, MBoolean::TRUE]);
         assert_eq!(
-            int32::make_int32(5),
+            int32::make_int32(&5),
             int32 {bytes: vec![make_empty_byte(), make_empty_byte(), make_empty_byte(), five_byte]}
         );
     }
