@@ -23,7 +23,7 @@ pub fn make_byte_with_padding(byte: Vec<MBoolean>) -> MByte {
     let byte_len = 8;
     let num_zeroes_to_pad = byte_len - byte.len();
     let mut return_byte = Vec::with_capacity(byte_len);
-    for x in 0..num_zeroes_to_pad{
+    for _ in 0..num_zeroes_to_pad{
         return_byte.push(MBoolean::FALSE);
     }
     for x in 0..byte.len() {

@@ -4,19 +4,19 @@ use crate::primitives::numbers::*;
 use crate::primitives::byte::{MByte, make_empty_byte};
 
 pub fn make_half_adder() -> fn(&MBoolean, &MBoolean) -> (MBoolean, MBoolean){
-    |inputA, inputB| {
-        let sum_bit = make_xor()(inputA, inputB);
-        let carry_bit = make_and()(inputA, inputB);
+    |input_a, input_b| {
+        let sum_bit = make_xor()(input_a, input_b);
+        let carry_bit = make_and()(input_a, input_b);
         return (sum_bit, carry_bit);
     }
 }
 
 pub fn make_full_adder() -> fn(&MBoolean, &MBoolean, &MBoolean) -> (MBoolean, MBoolean) {
-    |inputA, inputB, inputC| {
-        let half_add_ab = make_half_adder()(inputA, inputB);
+    |input_a, input_b, input_c| {
+        let half_add_ab = make_half_adder()(input_a, input_b);
         let sum_ab = half_add_ab.0;
         let carry_ab = half_add_ab.1;
-        let sum_carry_abc = make_half_adder()(&sum_ab, inputC);
+        let sum_carry_abc = make_half_adder()(&sum_ab, input_c);
         let total_sum = sum_carry_abc.0;
         let carry_abc = sum_carry_abc.1;
         let total_carry = make_or()(&carry_ab, &carry_abc);
@@ -31,7 +31,7 @@ pub fn make_adder() -> fn(&Number, &Number) -> Number {
 
 }
 
-fn add(x: &HasBytes, y: &HasBytes) -> Number {
+fn add(x: &dyn HasBytes, y: &dyn HasBytes) -> Number {
     let mut x_bytes = x.get_bytes();
     let mut y_bytes = y.get_bytes();
     let num_x_bytes = x_bytes.len();
@@ -56,28 +56,37 @@ fn add(x: &HasBytes, y: &HasBytes) -> Number {
 }
 
 fn add_checked(x: Vec<MByte>, y: Vec<MByte>) -> Number {
+    println!("\n\n\n\n\n\n\n");
     let num_bytes = x.len();
-    let mut carry_bit = &MBoolean::FALSE;
+    let carry_bit = &mut MBoolean::FALSE;
     let mut byte_vector = vec![];
     for a_byte in 0..num_bytes {
-        let mut x_byte = x[a_byte].clone();
+        let byte_index = num_bytes - 1 - a_byte;
+        println!("Adding byte index {:?}", byte_index);
+        println!("Carry bit is {:?}", carry_bit);
+        let mut x_byte = x[byte_index].clone();
         //Convert to LE
         x_byte.reverse();
-        let mut y_byte = y[a_byte].clone();
+        let mut y_byte = y[byte_index].clone();
         // Convert to LE
         y_byte.reverse();
-        let (mut sum_byte, carry_bit) =
-            eight_bit_carry_adder(&x_byte, &y_byte, carry_bit);
+        let (mut sum_byte, new_carry_bit) =
+            eight_bit_carry_adder(&x_byte, &y_byte, &carry_bit.clone());
         //Convert sum byte to big endian for return
         sum_byte.reverse();
-        byte_vector.push(sum_byte)
+        byte_vector.push(sum_byte);
+
+        *carry_bit = new_carry_bit;
     }
 
+    //Convert byte vector to Big Endian
+    byte_vector.reverse();
+
     if num_bytes <= 1 {
-        return Number::int8(int8::new(byte_vector))
+        return Number::Int8(Int8::new(byte_vector))
     }
     else if num_bytes <= 4 {
-        return Number::int32(int32::new(byte_vector))
+        return Number::Int32(Int32::new(byte_vector))
     }
     else {
         panic!("No number implemented which can store {} bytes");
@@ -93,7 +102,7 @@ fn eight_bit_carry_adder(x: &MByte, y: &MByte, carry_bit: &MBoolean) -> (MByte, 
     let first_bit_y = &y[0];
     let rest_x_bits = &x[1..];
     let rest_y_bits = &y[1..];
-    let (sum0, carry0) = make_half_adder()(first_bit_x, first_bit_y);
+    let (sum0, carry0) = make_full_adder()(first_bit_x, first_bit_y, carry_bit);
     println!("Sum0 {:?}, Carry0 {:?}", sum0, carry0);
     let mut sum_byte = Vec::with_capacity(8);
     sum_byte.push(sum0);
@@ -185,10 +194,17 @@ mod test {
 
     #[test]
     fn test_adder() {
-        let five = int8::make_int8(&5);
-        let ten = int8::make_int8(&10);
-        assert_eq!(ten.to_number(), make_adder()(&five.to_number(), &five.to_number()))
+        let five = Int8::make_int8(&5);
+        let ten = Int8::make_int8(&10);
+        assert_eq!(ten.to_number(), make_adder()(&five.to_number(), &five.to_number()));
+
+        let two_fifty_five = Int32::make_int32(&255);
+        let one = Int32::make_int32(&1);
+        let two_fifty_six = Int32::make_int32(&256);
+        assert_eq!(make_adder()(&two_fifty_five.to_number(),&one.to_number()),
+                   two_fifty_six.to_number())
     }
+
 
     #[test]
     fn test_eight_bit_carry_adder() {
