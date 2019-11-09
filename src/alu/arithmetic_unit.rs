@@ -4,19 +4,19 @@ use crate::primitives::numbers::*;
 use crate::primitives::byte::{MByte, make_empty_byte};
 
 pub fn make_half_adder() -> fn(&MBoolean, &MBoolean) -> (MBoolean, MBoolean){
-    |inputA, inputB| {
-        let sum_bit = make_xor()(inputA, inputB);
-        let carry_bit = make_and()(inputA, inputB);
+    |input_a, input_b| {
+        let sum_bit = make_xor()(input_a, input_b);
+        let carry_bit = make_and()(input_a, input_b);
         return (sum_bit, carry_bit);
     }
 }
 
 pub fn make_full_adder() -> fn(&MBoolean, &MBoolean, &MBoolean) -> (MBoolean, MBoolean) {
-    |inputA, inputB, inputC| {
-        let half_add_ab = make_half_adder()(inputA, inputB);
+    |input_a, input_b, input_c| {
+        let half_add_ab = make_half_adder()(input_a, input_b);
         let sum_ab = half_add_ab.0;
         let carry_ab = half_add_ab.1;
-        let sum_carry_abc = make_half_adder()(&sum_ab, inputC);
+        let sum_carry_abc = make_half_adder()(&sum_ab, input_c);
         let total_sum = sum_carry_abc.0;
         let carry_abc = sum_carry_abc.1;
         let total_carry = make_or()(&carry_ab, &carry_abc);
