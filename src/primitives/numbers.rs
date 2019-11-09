@@ -3,17 +3,17 @@ use crate::primitives::booleans::MBoolean;
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub enum Number {
-    int8(int8),
-    int32(int32)
+    int8(Int8),
+    int32(Int32)
 }
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
-pub struct int32 {
+pub struct Int32 {
     bytes: Vec<MByte>
 }
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
-pub struct int8 {
+pub struct Int8 {
     bytes: Vec<MByte>
 }
 
@@ -31,17 +31,17 @@ impl HasBytes for Number {
 }
 
 
-impl int32 {
+impl Int32 {
 
-    pub fn make_zero() -> int32 {
-        return int32 {bytes: vec![make_empty_byte(); 4]}
+    pub fn make_zero() -> Int32 {
+        return Int32 {bytes: vec![make_empty_byte(); 4]}
     }
 
     pub fn is_valid(&self) -> bool {
         self.bytes.len() == 4
     }
 
-    pub fn make_int32(input: &usize) -> int32 {
+    pub fn make_int32(input: &usize) -> Int32 {
         let num = make_intn(input, &32);
         match num {
             Number::int32(an_int32) => an_int32,
@@ -49,8 +49,8 @@ impl int32 {
         }
     }
 
-    pub fn new(some_bytes: Vec<MByte>) -> int32 {
-        return int32 {bytes: some_bytes}
+    pub fn new(some_bytes: Vec<MByte>) -> Int32 {
+        return Int32 {bytes: some_bytes}
     }
 
     pub fn to_number(&self) -> Number {
@@ -63,17 +63,17 @@ impl int32 {
 
 }
 
-impl int8 {
+impl Int8 {
 
-    pub fn make_zero() -> int8 {
-        return int8 {bytes: vec![make_empty_byte()]}
+    pub fn make_zero() -> Int8 {
+        return Int8 {bytes: vec![make_empty_byte()]}
     }
 
     pub fn is_valid(&self) -> bool {
         self.bytes.len() == 1
     }
 
-    pub fn make_int8(input: &usize) -> int8 {
+    pub fn make_int8(input: &usize) -> Int8 {
         let num = make_intn(input, &8);
         match num {
             Number::int8(an_int8) =>  an_int8,
@@ -88,8 +88,8 @@ impl int8 {
         return self.bytes.clone();
     }
 
-    pub fn new(some_bytes: Vec<MByte>) -> int8 {
-        return int8 {bytes: some_bytes}
+    pub fn new(some_bytes: Vec<MByte>) -> Int8 {
+        return Int8 {bytes: some_bytes}
     }
 }
 
@@ -124,8 +124,8 @@ fn make_intn(input: &usize, num_bits: &usize) -> Number {
     }
 
     return match num_bits {
-        8 => Number::int8(int8{bytes: byte_vector}),
-        32 => Number::int32(int32{bytes: byte_vector}),
+        8 => Number::int8(Int8 {bytes: byte_vector}),
+        32 => Number::int32(Int32 {bytes: byte_vector}),
         _ => {panic!("{} bit number is not supported yet.")}
     }
 }
@@ -139,18 +139,18 @@ mod tests {
 
     #[test]
     fn test_make_zero() {
-        assert_eq!(int32 {bytes: vec![make_empty_byte(); 4]}, int32::make_zero());
+        assert_eq!(Int32 {bytes: vec![make_empty_byte(); 4]}, Int32::make_zero());
     }
 
     #[test]
     fn test_is_valid32() {
-        let valid_int32 = int32::make_zero();
+        let valid_int32 = Int32::make_zero();
         assert!(valid_int32.is_valid());
-        let invalid_int32_too_small = int32 {
+        let invalid_int32_too_small = Int32 {
             bytes: vec![make_empty_byte(), make_empty_byte(), make_empty_byte()]
         };
         assert!(!invalid_int32_too_small.is_valid());
-        let invalid_int32_too_big = int32 {
+        let invalid_int32_too_big = Int32 {
             bytes:  vec![make_empty_byte(), make_empty_byte(),
                          make_empty_byte(), make_empty_byte(), make_empty_byte()]
         };
@@ -159,13 +159,13 @@ mod tests {
 
     #[test]
     fn test_is_valid8() {
-        let valid_int8 = int8::make_zero();
+        let valid_int8 = Int8::make_zero();
         assert!(valid_int8.is_valid());
-        let invalid_int8_too_small = int32 {
+        let invalid_int8_too_small = Int32 {
             bytes: vec![]
         };
         assert!(!invalid_int8_too_small.is_valid());
-        let invalid_int8_too_big = int32 {
+        let invalid_int8_too_big = Int32 {
             bytes:  vec![make_empty_byte(), make_empty_byte(), make_empty_byte()]
         };
         assert!(!invalid_int8_too_big.is_valid());
@@ -177,8 +177,8 @@ mod tests {
         let five_byte =
             make_byte_with_padding(vec![MBoolean::TRUE, MBoolean::FALSE, MBoolean::TRUE]);
         assert_eq!(
-            int8::make_int8(&5),
-            int8 {bytes: vec![five_byte]}
+            Int8::make_int8(&5),
+            Int8 {bytes: vec![five_byte]}
         );
     }
 
@@ -187,8 +187,8 @@ mod tests {
         let five_byte =
             make_byte_with_padding(vec![MBoolean::TRUE, MBoolean::FALSE, MBoolean::TRUE]);
         assert_eq!(
-            int32::make_int32(&5),
-            int32 {bytes: vec![make_empty_byte(), make_empty_byte(), make_empty_byte(), five_byte]}
+            Int32::make_int32(&5),
+            Int32 {bytes: vec![make_empty_byte(), make_empty_byte(), make_empty_byte(), five_byte]}
         );
     }
 }

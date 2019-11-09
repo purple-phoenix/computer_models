@@ -74,10 +74,10 @@ fn add_checked(x: Vec<MByte>, y: Vec<MByte>) -> Number {
     }
 
     if num_bytes <= 1 {
-        return Number::int8(int8::new(byte_vector))
+        return Number::int8(Int8::new(byte_vector))
     }
     else if num_bytes <= 4 {
-        return Number::int32(int32::new(byte_vector))
+        return Number::int32(Int32::new(byte_vector))
     }
     else {
         panic!("No number implemented which can store {} bytes");
@@ -185,8 +185,8 @@ mod test {
 
     #[test]
     fn test_adder() {
-        let five = int8::make_int8(&5);
-        let ten = int8::make_int8(&10);
+        let five = Int8::make_int8(&5);
+        let ten = Int8::make_int8(&10);
         assert_eq!(ten.to_number(), make_adder()(&five.to_number(), &five.to_number()))
     }
 
