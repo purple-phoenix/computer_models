@@ -5,6 +5,11 @@ struct int32 {
     bytes: Vec<MByte>
 }
 
+#[derive(Debug, PartialOrd, PartialEq)]
+struct int8 {
+    bytes: Vec<MByte>
+}
+
 impl int32 {
 
     fn make_zero() -> int32 {
@@ -13,6 +18,17 @@ impl int32 {
 
     fn is_valid(&self) -> bool {
         self.bytes.len() == 4
+    }
+}
+
+impl int8 {
+
+    fn make_zero() -> int8 {
+        return int8 {bytes: vec![make_empty_byte()]}
+    }
+
+    fn is_valid(&self) -> bool {
+        self.bytes.len() == 1
     }
 }
 
@@ -28,7 +44,7 @@ mod tests {
     }
 
     #[test]
-    fn test_is_valid() {
+    fn test_is_valid32() {
         let valid_int32 = int32::make_zero();
         assert!(valid_int32.is_valid());
         let invalid_int32_too_small = int32 {
@@ -40,5 +56,19 @@ mod tests {
                          make_empty_byte(), make_empty_byte(), make_empty_byte()]
         };
         assert!(!invalid_int32_too_big.is_valid());
+    }
+
+    #[test]
+    fn test_is_valid8() {
+        let valid_int8 = int8::make_zero();
+        assert!(valid_int8.is_valid());
+        let invalid_int8_too_small = int32 {
+            bytes: vec![]
+        };
+        assert!(!invalid_int8_too_small.is_valid());
+        let invalid_int8_too_big = int32 {
+            bytes:  vec![make_empty_byte(), make_empty_byte(), make_empty_byte()]
+        };
+        assert!(!invalid_int8_too_big.is_valid());
     }
 }
