@@ -18,6 +18,19 @@ pub struct int8 {
     bytes: Vec<MByte>
 }
 
+pub trait HasBytes{
+    fn get_bytes(&self) -> Vec<MByte>;
+}
+
+impl HasBytes for Number {
+    fn get_bytes(&self) -> Vec<MByte> {
+        match self {
+            Number::int8(an_int8) => an_int8.get_bytes(),
+            Number::int32(an_int32) => an_int32.get_bytes()
+        }
+    }
+}
+
 
 impl int32 {
 
@@ -41,6 +54,10 @@ impl int32 {
         return Number::int32(self.clone())
     }
 
+    pub fn get_bytes(&self) -> Vec<MByte> {
+        return self.bytes.clone()
+    }
+
 }
 
 impl int8 {
@@ -62,6 +79,10 @@ impl int8 {
     }
     pub fn to_number(&self) -> Number {
         return Number::int8(self.clone())
+    }
+
+    pub fn get_bytes(&self) -> Vec<MByte> {
+        return self.bytes.clone();
     }
 }
 
