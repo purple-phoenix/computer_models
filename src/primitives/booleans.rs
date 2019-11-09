@@ -1,7 +1,7 @@
 use crate::primitives::booleans::MBoolean::{TRUE, FALSE};
 
 // State implementation
-#[derive(Debug, PartialOrd, PartialEq)]
+#[derive(Debug, PartialOrd, PartialEq, Clone, Copy)]
 pub enum MBoolean {
     TRUE,
     FALSE
