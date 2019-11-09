@@ -56,22 +56,31 @@ fn add(x: &dyn HasBytes, y: &dyn HasBytes) -> Number {
 }
 
 fn add_checked(x: Vec<MByte>, y: Vec<MByte>) -> Number {
+    println!("\n\n\n\n\n\n\n");
     let num_bytes = x.len();
-    let mut carry_bit = &MBoolean::FALSE;
+    let mut carry_bit = &mut MBoolean::FALSE;
     let mut byte_vector = vec![];
     for a_byte in 0..num_bytes {
-        let mut x_byte = x[a_byte].clone();
+        let byte_index = num_bytes - 1 - a_byte;
+        println!("Adding byte index {:?}", byte_index);
+        println!("Carry bit is {:?}", carry_bit);
+        let mut x_byte = x[byte_index].clone();
         //Convert to LE
         x_byte.reverse();
-        let mut y_byte = y[a_byte].clone();
+        let mut y_byte = y[byte_index].clone();
         // Convert to LE
         y_byte.reverse();
-        let (mut sum_byte, carry_bit) =
-            eight_bit_carry_adder(&x_byte, &y_byte, carry_bit);
+        let (mut sum_byte, new_carry_bit) =
+            eight_bit_carry_adder(&x_byte, &y_byte, &carry_bit.clone());
         //Convert sum byte to big endian for return
         sum_byte.reverse();
-        byte_vector.push(sum_byte)
+        byte_vector.push(sum_byte);
+
+        *carry_bit = new_carry_bit;
     }
+
+    //Convert byte vector to Big Endian
+    byte_vector.reverse();
 
     if num_bytes <= 1 {
         return Number::Int8(Int8::new(byte_vector))
@@ -93,7 +102,7 @@ fn eight_bit_carry_adder(x: &MByte, y: &MByte, carry_bit: &MBoolean) -> (MByte, 
     let first_bit_y = &y[0];
     let rest_x_bits = &x[1..];
     let rest_y_bits = &y[1..];
-    let (sum0, carry0) = make_half_adder()(first_bit_x, first_bit_y);
+    let (sum0, carry0) = make_full_adder()(first_bit_x, first_bit_y, carry_bit);
     println!("Sum0 {:?}, Carry0 {:?}", sum0, carry0);
     let mut sum_byte = Vec::with_capacity(8);
     sum_byte.push(sum0);
@@ -187,8 +196,15 @@ mod test {
     fn test_adder() {
         let five = Int8::make_int8(&5);
         let ten = Int8::make_int8(&10);
-        assert_eq!(ten.to_number(), make_adder()(&five.to_number(), &five.to_number()))
+        assert_eq!(ten.to_number(), make_adder()(&five.to_number(), &five.to_number()));
+
+        let two_fifty_five = Int32::make_int32(&255);
+        let one = Int32::make_int32(&1);
+        let two_fifty_six = Int32::make_int32(&256);
+        assert_eq!(make_adder()(&two_fifty_five.to_number(),&one.to_number()),
+                   two_fifty_six.to_number())
     }
+
 
     #[test]
     fn test_eight_bit_carry_adder() {
