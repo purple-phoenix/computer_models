@@ -21,6 +21,7 @@ pub type MTrue<T1, T2> = Box<dyn Fn(T1, T2) -> T1>;
 
 pub type MFalse<T1, T2> = Box<dyn Fn(T1, T2) -> T2>;
 
+#[allow(dead_code)]
 pub enum MBooleanFn<T1, T2> {
     TRUE(MTrue<T1, T2>),
     FALSE(MFalse<T1, T2>)
