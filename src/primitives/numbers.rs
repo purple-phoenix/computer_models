@@ -102,7 +102,7 @@ fn make_intn(input: &usize, num_bits: &usize) -> Number {
     let mut byte_vector = Vec::with_capacity(num_bits /8);
 
     let mut byte_index = input_bytes.len() - num_bytes;
-    for byte_num in 0..num_bytes {
+    for _byte_num in 0..num_bytes {
         let mut bit_vector: Vec<MBoolean> = Vec::with_capacity(byte_len);
 
         let comparison_byte = input_bytes[byte_index];
