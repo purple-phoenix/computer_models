@@ -1,6 +1,7 @@
 use crate::primitives::booleans::MBoolean;
 
-type MByte = Vec<MBoolean>;
+pub type MByte = Vec<MBoolean>;
+
 
 pub fn make_empty_byte() -> MByte {
     return vec![MBoolean::FALSE; 8]
