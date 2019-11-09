@@ -2,17 +2,18 @@ use crate::primitives::byte::{MByte, make_empty_byte, make_byte_with_padding};
 use std::i32::*;
 use crate::primitives::booleans::MBoolean;
 
+#[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub enum Number {
     int8(int8),
     int32(int32)
 }
 
-#[derive(Debug, PartialOrd, PartialEq)]
+#[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub struct int32 {
     bytes: Vec<MByte>
 }
 
-#[derive(Debug, PartialOrd, PartialEq)]
+#[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub struct int8 {
     bytes: Vec<MByte>
 }
@@ -36,6 +37,10 @@ impl int32 {
         }
     }
 
+    pub fn to_number(&self) -> Number {
+        return Number::int32(self.clone())
+    }
+
 }
 
 impl int8 {
@@ -54,6 +59,9 @@ impl int8 {
             Number::int8(an_int8) =>  an_int8,
             _ => {panic!("make_intn({}, 8) did not return an int8")}
         }
+    }
+    pub fn to_number(&self) -> Number {
+        return Number::int8(self.clone())
     }
 }
 
