@@ -1,4 +1,4 @@
-mod logical_gates;
+pub(crate) mod logical_gates;
 
 use crate::primitives::*;
 
