@@ -134,7 +134,7 @@ fn make_intn(input: &usize, num_bits: &usize) -> Number {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::primitives::byte::{make_empty_byte, make_byte};
+    use crate::primitives::byte::{make_empty_byte};
     use crate::primitives::booleans::MBoolean;
 
     #[test]
