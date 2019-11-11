@@ -1,1 +1,2 @@
-mod gated_latch;
+pub mod gated_latch;
+mod register;

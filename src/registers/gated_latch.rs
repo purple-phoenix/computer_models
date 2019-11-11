@@ -1,7 +1,8 @@
 use crate::primitives::booleans::MBoolean;
 use crate::logic_gates::logical_gates::{make_or, make_not, make_and};
 
-struct GatedLatch {
+#[derive(Debug, PartialOrd, PartialEq, Clone)]
+pub struct GatedLatch {
     state: MBoolean
 }
 
