@@ -1,5 +1,6 @@
 use crate::primitives::booleans::MBoolean;
 use crate::logic_gates::logical_gates::{make_or, make_not, make_and};
+use crate::primitives::byte::MByte;
 
 #[derive(Debug, PartialOrd, PartialEq, Clone)]
 pub struct GatedLatch {
@@ -38,12 +39,22 @@ fn make_gated_latch() -> GatedLatch {
     return GatedLatch {state: MBoolean::FALSE}
 }
 
+pub fn read_latch_row_to_byte(latch_row: Vec<GatedLatch>) -> MByte {
+    let byte_len = 8;
+    let mut byte = Vec::with_capacity(byte_len);
+    for latch in latch_row {
+        byte.push(latch.get_state());
+    }
+    return byte;
+}
+
 
 
 #[cfg(test)]
 mod tests {
 
     use super::*;
+    use crate::primitives::byte::make_byte_with_padding;
 
     #[test]
     fn test_gated_latch() {
@@ -93,5 +104,22 @@ mod tests {
                    MBoolean::FALSE);
         assert_eq!(and_or_latch(MBoolean::TRUE, MBoolean::TRUE, MBoolean::TRUE),
                    MBoolean::FALSE);
+    }
+
+    #[test]
+    fn test_latch_row_to_byte() {
+        assert_eq!(
+            make_byte_with_padding(vec![MBoolean::TRUE, MBoolean::FALSE, MBoolean::TRUE]),
+            read_latch_row_to_byte(
+                vec![
+                    GatedLatch::new(MBoolean::FALSE),
+                    GatedLatch::new(MBoolean::FALSE),
+                    GatedLatch::new(MBoolean::FALSE),
+                    GatedLatch::new(MBoolean::FALSE),
+                    GatedLatch::new(MBoolean::FALSE),
+                    GatedLatch::new(MBoolean::TRUE),
+                    GatedLatch::new(MBoolean::FALSE),
+                    GatedLatch::new(MBoolean::TRUE)]
+        ));
     }
 }

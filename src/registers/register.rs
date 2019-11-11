@@ -1,4 +1,4 @@
-use crate::registers::gated_latch::GatedLatch;
+use crate::registers::gated_latch::{GatedLatch, read_latch_row_to_byte};
 use crate::primitives::booleans::MBoolean;
 use crate::primitives::byte::MByte;
 
@@ -25,12 +25,30 @@ impl Register {
         }
         return Register {num_bytes, data};
     }
+
+    fn make_register(data: Vec<Vec<GatedLatch>>) -> Register {
+        return Register{num_bytes: data.len(), data}
+    }
+}
+
+impl StoresBytes for Register {
+    fn read_bytes(&self) -> Vec<MByte> {
+        let mut byte_vector = Vec::with_capacity(self.num_bytes);
+        for row_index in 0..self.num_bytes {
+            let latch_row = self.data[row_index].clone();
+            byte_vector.push(read_latch_row_to_byte(latch_row));
+        }
+        return byte_vector;
+    }
 }
 
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::panic::resume_unwind;
+    use crate::primitives::byte::make_byte_with_padding;
+
     #[test]
     fn test_make_empty_register() {
         let byte_len = 8;
@@ -44,6 +62,21 @@ mod tests {
             = vec![vec![GatedLatch::new(MBoolean::FALSE); byte_len]; 4];
         assert_eq!(Register::make_empty_register(4),
                    Register{num_bytes:4, data:thirty_two_bit_empty_register_data});
+
+    }
+
+    #[test]
+    fn test_read_register_bytes() {
+        let mut register_data_byte = vec![GatedLatch::new(MBoolean::FALSE); 5];
+        register_data_byte.push(GatedLatch::new(MBoolean::TRUE));
+        register_data_byte.push(GatedLatch::new(MBoolean::FALSE));
+        register_data_byte.push(GatedLatch::new(MBoolean::TRUE));
+
+        let register = Register::make_register(vec![register_data_byte]);
+
+        assert_eq!(*register.read_bytes().get(0).unwrap(),
+                   make_byte_with_padding(
+                       vec![MBoolean::TRUE, MBoolean::FALSE, MBoolean::TRUE]));
 
     }
 
