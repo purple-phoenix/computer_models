@@ -29,6 +29,23 @@ impl Register {
     fn make_register(data: Vec<Vec<GatedLatch>>) -> Register {
         return Register{num_bytes: data.len(), data}
     }
+
+    fn make_register_from_bytes(data_bytes: Vec<MByte>) -> Register {
+        let num_bytes = data_bytes.len();
+        let byte_len = 8;
+        let mut register_data = Vec::with_capacity(num_bytes);
+
+        for byte_num in 0..num_bytes {
+            let mut latch_row = Vec::with_capacity(byte_len);
+            let a_byte = data_bytes.get(byte_num).unwrap();
+            for j in 0..byte_len {
+                let bit_value = a_byte.get(j).unwrap();
+                latch_row.push(GatedLatch::new(bit_value.clone()));
+            }
+            register_data.push(latch_row);
+        }
+        return Register {num_bytes, data:register_data}
+    }
 }
 
 impl StoresBytes for Register {
@@ -78,6 +95,22 @@ mod tests {
                    make_byte_with_padding(
                        vec![MBoolean::TRUE, MBoolean::FALSE, MBoolean::TRUE]));
 
+    }
+
+    #[test]
+    fn test_make_register_from_bytes() {
+        let mut register_data_byte = vec![GatedLatch::new(MBoolean::FALSE); 5];
+        register_data_byte.push(GatedLatch::new(MBoolean::TRUE));
+        register_data_byte.push(GatedLatch::new(MBoolean::FALSE));
+        register_data_byte.push(GatedLatch::new(MBoolean::TRUE));
+
+        let register = Register::make_register(vec![register_data_byte]);
+        assert_eq!(
+            Register::make_register_from_bytes(
+                vec![make_byte_with_padding(
+                    vec![MBoolean::TRUE, MBoolean::FALSE, MBoolean::TRUE])]),
+                    register
+                    )
     }
 
 }
