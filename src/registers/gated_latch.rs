@@ -6,8 +6,19 @@ struct GatedLatch {
 }
 
 impl GatedLatch {
-    pub fn update(&self, data_bit: MBoolean, write_bit: MBoolean) {
+    pub fn update(&self, data_bit: MBoolean, write_bit: MBoolean) -> GatedLatch {
+        let set_bit = make_and()(&data_bit, &write_bit);
+        let not_data = make_not()(&data_bit);
+        let reset_bit = make_and()(&not_data, &write_bit);
+        let updated_state = make_and_or_latch()(self.state, set_bit, reset_bit);
+        return GatedLatch::new(updated_state)
+    }
 
+    pub fn get_state(&self) -> MBoolean {
+        return self.state;
+    }
+    pub fn new(new_state: MBoolean) -> GatedLatch {
+        return GatedLatch{state: new_state}
     }
 }
 
@@ -27,6 +38,7 @@ fn make_gated_latch() -> GatedLatch {
 }
 
 
+
 #[cfg(test)]
 mod tests {
 
@@ -36,14 +48,27 @@ mod tests {
     fn test_gated_latch() {
         // State of latch initialized to zero
         let gated_latch = make_gated_latch();
-        /*
-        assert_eq!(gated_latch(MBoolean::FALSE, MBoolean::FALSE), MBoolean::FALSE);
-        assert_eq!(gated_latch(MBoolean::TRUE, MBoolean::FALSE), MBoolean::FALSE);
-        assert_eq!(gated_latch(MBoolean::FALSE, MBoolean::TRUE), MBoolean::FALSE);
-        assert_eq!(gated_latch(MBoolean::TRUE, MBoolean::TRUE), MBoolean::TRUE);
-        assert_eq!(gated_latch(MBoolean::TRUE, MBoolean::FALSE), MBoolean::TRUE);
-        assert_eq!(gated_latch(MBoolean::FALSE, MBoolean::FALSE), MBoolean::TRUE);
-        */
+
+        assert_eq!(gated_latch.get_state(), MBoolean::FALSE);
+        let gated_latch =
+            gated_latch.update(MBoolean::FALSE, MBoolean::FALSE);
+        assert_eq!(gated_latch.get_state(), MBoolean::FALSE);
+        let gated_latch =
+            gated_latch.update(MBoolean::TRUE, MBoolean::FALSE);
+        assert_eq!(gated_latch.get_state(), MBoolean::FALSE);
+        let gated_latch =
+            gated_latch.update(MBoolean::FALSE, MBoolean::TRUE);
+        assert_eq!(gated_latch.get_state(), MBoolean::FALSE);
+        let gated_latch =
+            gated_latch.update(MBoolean::TRUE, MBoolean::TRUE);
+        assert_eq!(gated_latch.get_state(), MBoolean::TRUE);
+        let gated_latch =
+            gated_latch.update(MBoolean::TRUE, MBoolean::FALSE);
+        assert_eq!(gated_latch.get_state(), MBoolean::TRUE);
+        let gated_latch =
+            gated_latch.update(MBoolean::FALSE, MBoolean::FALSE);
+        assert_eq!(gated_latch.get_state(), MBoolean::TRUE);
+
     }
 
     #[test]
